@@ -19,7 +19,7 @@ services:
     networks:
       - toerio
     ports: 
-      - "5000:80"
+      - "80:80"
 
     # Critical to prevent nginx crashing with 'upstream server not found'
     depends_on:  
