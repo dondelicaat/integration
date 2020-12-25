@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3.8'
 services:
 
 
@@ -14,6 +14,11 @@ services:
     # environment: 
       # TODO: add environment variables.
 
+
+    # The API requires toerio-storage to save audio files.
+    depends_on:
+      - toerio-storage
+
   toerio-gateway:
     image: oscardeli/toerio-gateway:latest
     networks:
@@ -26,6 +31,24 @@ services:
       - toerio-api
       - toerio-gui
 
+  # TODO: Create secure pw + username (in env), put behind HTTPS + load balancing using NGINX.
+  toerio-storage:
+    image: minio/minio:latest
+    networks: 
+      - toerio
+    volumes:
+      - datavolume:/data
+    ports:
+      - "9000:9000"
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+
+    command: server /output
+
 
 networks:
   toerio:
+
+volumes:
+  datavolume:
