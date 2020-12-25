@@ -11,10 +11,16 @@ services:
     image: oscardeli/toerio-api:latest
     networks: 
       - toerio
-    # environment: 
-      # TODO: add environment variables.
-
-
+    environment: 
+      NODE_ENV: ${NODE_ENV}
+      port: ${port}
+      databaseUser: ${databaseUser}
+      databasePassword: ${databasePassword}
+      databaseName: ${databaseName}
+      minioURI: ${minioURI}
+      minioPUB: ${minioPUB}
+      minioPRIV: ${minioPRIV}
+      
     # The API requires toerio-storage to save audio files.
     depends_on:
       - toerio-storage
@@ -41,8 +47,8 @@ services:
     ports:
       - "9000:9000"
     environment:
-      MINIO_ACCESS_KEY: minio
-      MINIO_SECRET_KEY: minio123
+      MINIO_ACCESS_KEY: ${minioPUB}
+      MINIO_SECRET_KEY: ${minioPRIV}
 
     command: server /output
 
