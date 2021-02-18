@@ -20,10 +20,18 @@ services:
       minioURI: ${minioURI}
       minioPUB: ${minioPUB}
       minioPRIV: ${minioPRIV}
+      AUTHENTICATION_SECRET: ${AUTHENTICATION_SECRET}
+
+      REDIS_URI: ${REDIS_URI}
+      REDIS_PORT: ${REDIS_PORT}
+
+      FIREBASE_API_KEY: ${FIREBASE_API_KEY}
       
-    # The API requires toerio-storage to save audio files.
+    # The API requires toerio-storage to save audio files 
+    # and redis to manage the job queue
     depends_on:
       - toerio-storage
+      - toerio-redis
 
   toerio-gateway:
     image: oscardeli/toerio-gateway:latest
@@ -50,7 +58,21 @@ services:
       MINIO_ACCESS_KEY: ${minioPUB}
       MINIO_SECRET_KEY: ${minioPRIV}
 
-    command: server /output
+    command: server /data
+
+  toerio-redis:
+    image: redis:alpine
+
+    command: redis-server
+
+    ports: 
+      - "6379:6379"
+
+    volumes:
+      - datavolume:/data
+
+    networks: 
+      - toerio
 
 
 networks:
@@ -58,3 +80,4 @@ networks:
 
 volumes:
   datavolume:
+    external: true
